@@ -7,7 +7,8 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Checkbox } from '../components/ui/checkbox';
 import { useToast } from '../hooks/use-toast';
-import { deviceTypes, issueTypes, generateTicketId } from '../mock/data';
+import { deviceTypes, issueTypes } from '../mock/data';
+import { repairAPI } from '../services/api';
 
 const SubmitRequest = () => {
   const { toast } = useToast();
@@ -29,6 +30,7 @@ const SubmitRequest = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [availableModels, setAvailableModels] = useState([]);
   const [availableIssues, setAvailableIssues] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleDeviceBrandChange = (brand) => {
     setFormData(prev => ({ ...prev, deviceBrand: brand, deviceModel: '' }));
@@ -46,7 +48,7 @@ const SubmitRequest = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!formData.gdprConsent) {
@@ -58,43 +60,46 @@ const SubmitRequest = () => {
       return;
     }
 
-    // Generate ticket ID and save to localStorage (mock backend)
-    const ticketId = generateTicketId();
-    const ticket = {
-      id: ticketId,
-      ...formData,
-      status: 'Submitted',
-      priority: formData.urgency === 'urgent' ? 'High' : 'Medium',
-      createdAt: new Date().toISOString(),
-      estimatedCompletion: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString()
-    };
+    setIsSubmitting(true);
 
-    // Save to localStorage
-    const existingTickets = JSON.parse(localStorage.getItem('fixnet_tickets') || '[]');
-    existingTickets.push(ticket);
-    localStorage.setItem('fixnet_tickets', JSON.stringify(existingTickets));
+    try {
+      const response = await repairAPI.createRequest(formData);
+      
+      if (response.success) {
+        toast({
+          title: "Repair Request Submitted!",
+          description: `Your ticket ID is ${response.ticket_id}. We'll contact you within 2 hours.`,
+        });
 
-    toast({
-      title: "Repair Request Submitted!",
-      description: `Your ticket ID is ${ticketId}. We'll contact you within 2 hours.`,
-    });
-
-    // Reset form
-    setFormData({
-      customerName: '',
-      customerEmail: '',
-      customerPhone: '',
-      deviceBrand: '',
-      deviceModel: '',
-      issueCategory: '',
-      specificIssue: '',
-      description: '',
-      urgency: 'normal',
-      pickupAddress: '',
-      pickupTime: '',
-      gdprConsent: false
-    });
-    setCurrentStep(1);
+        // Reset form
+        setFormData({
+          customerName: '',
+          customerEmail: '',
+          customerPhone: '',
+          deviceBrand: '',
+          deviceModel: '',
+          issueCategory: '',
+          specificIssue: '',
+          description: '',
+          urgency: 'normal',
+          pickupAddress: '',
+          pickupTime: '',
+          gdprConsent: false
+        });
+        setCurrentStep(1);
+      } else {
+        throw new Error(response.message || 'Failed to submit request');
+      }
+    } catch (error) {
+      console.error('Submission error:', error);
+      toast({
+        title: "Submission Failed",
+        description: error.response?.data?.detail || error.message || "Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const nextStep = () => {
@@ -364,7 +369,7 @@ const SubmitRequest = () => {
                   type="button"
                   onClick={prevStep}
                   variant="outline"
-                  disabled={currentStep === 1}
+                  disabled={currentStep === 1 || isSubmitting}
                   className="px-8 py-3"
                 >
                   Previous
@@ -374,7 +379,7 @@ const SubmitRequest = () => {
                   <Button
                     type="button"
                     onClick={nextStep}
-                    disabled={!isStepValid()}
+                    disabled={!isStepValid() || isSubmitting}
                     className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-8 py-3"
                   >
                     Next Step
@@ -382,10 +387,17 @@ const SubmitRequest = () => {
                 ) : (
                   <Button
                     type="submit"
-                    disabled={!isStepValid()}
+                    disabled={!isStepValid() || isSubmitting}
                     className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-8 py-3"
                   >
-                    Submit Request
+                    {isSubmitting ? (
+                      <div className="flex items-center">
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                        Submitting...
+                      </div>
+                    ) : (
+                      'Submit Request'
+                    )}
                   </Button>
                 )}
               </div>
