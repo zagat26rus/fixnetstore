@@ -46,7 +46,7 @@ async def get_database() -> AsyncIOMotorDatabase:
 async def create_indexes():
     """Create database indexes for better performance."""
     try:
-        if db_instance.db:
+        if db_instance.db is not None:
             # Repair requests indexes
             await db_instance.db.repair_requests.create_index("ticket_id", unique=True)
             await db_instance.db.repair_requests.create_index("customerEmail")
