@@ -7,8 +7,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # Import our modules
-from .database import connect_to_mongo, close_mongo_connection
-from .auth import create_default_admin, get_database
+from .database import connect_to_mongo, close_mongo_connection, get_database
+from .auth import create_default_admin
 from .routes import repair_requests, auth, contact
 
 ROOT_DIR = Path(__file__).parent
