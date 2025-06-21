@@ -5,6 +5,7 @@ import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
 import { Label } from '../components/ui/label';
 import { useToast } from '../hooks/use-toast';
+import { contactAPI } from '../services/api';
 
 const Contact = () => {
   const { toast } = useToast();
@@ -14,27 +15,45 @@ const Contact = () => {
     subject: '',
     message: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
-    // Mock form submission
-    toast({
-      title: "Message Sent!",
-      description: "Thank you for contacting us. We'll get back to you within 24 hours.",
-    });
+    try {
+      const response = await contactAPI.sendMessage(formData);
+      
+      if (response.success) {
+        toast({
+          title: "Message Sent!",
+          description: response.message || "Thank you for contacting us. We'll get back to you within 24 hours.",
+        });
 
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      subject: '',
-      message: ''
-    });
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: ''
+        });
+      } else {
+        throw new Error(response.message || 'Failed to send message');
+      }
+    } catch (error) {
+      console.error('Contact form error:', error);
+      toast({
+        title: "Failed to Send Message",
+        description: error.response?.data?.detail || error.message || "Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -144,6 +163,7 @@ const Contact = () => {
                         placeholder="Enter your full name"
                         className="mt-2"
                         required
+                        disabled={isSubmitting}
                       />
                     </div>
                     <div>
@@ -155,6 +175,7 @@ const Contact = () => {
                         placeholder="Enter your email"
                         className="mt-2"
                         required
+                        disabled={isSubmitting}
                       />
                     </div>
                   </div>
@@ -167,6 +188,7 @@ const Contact = () => {
                       placeholder="What's this about?"
                       className="mt-2"
                       required
+                      disabled={isSubmitting}
                     />
                   </div>
 
@@ -178,14 +200,23 @@ const Contact = () => {
                       placeholder="Tell us how we can help..."
                       className="mt-2 min-h-[150px]"
                       required
+                      disabled={isSubmitting}
                     />
                   </div>
 
                   <Button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl"
+                    disabled={isSubmitting}
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   >
-                    Send Message
+                    {isSubmitting ? (
+                      <div className="flex items-center">
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                        Sending Message...
+                      </div>
+                    ) : (
+                      'Send Message'
+                    )}
                   </Button>
                 </form>
               </CardContent>
