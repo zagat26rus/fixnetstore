@@ -21,7 +21,7 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
-            {/* Public Routes */}
+            {/* Public Routes with Navigation */}
             <Route path="/" element={
               <>
                 <Navigation />
@@ -65,13 +65,16 @@ function App() {
               </>
             } />
             
-            {/* Admin Routes */}
+            {/* Admin Routes - Standalone */}
             <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin" element={
-              <ProtectedRoute>
-                <AdminDashboard />
-              </ProtectedRoute>
-            } />
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } 
+            />
           </Routes>
           <Toaster />
         </BrowserRouter>
@@ -79,5 +82,7 @@ function App() {
     </div>
   );
 }
+
+export default App;
 
 export default App;
