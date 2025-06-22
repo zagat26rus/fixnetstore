@@ -12,19 +12,17 @@ export const useLanguage = () => {
 };
 
 export const LanguageProvider = ({ children }) => {
-  const [currentLanguage, setCurrentLanguage] = useState('en');
+  const [currentLanguage, setCurrentLanguage] = useState('ru'); // Default to Russian
 
   useEffect(() => {
-    // Get saved language from localStorage or detect browser language
+    // Get saved language from localStorage or use Russian as default
     const savedLanguage = localStorage.getItem('fixnet_language');
     if (savedLanguage) {
       setCurrentLanguage(savedLanguage);
     } else {
-      // Detect browser language
-      const browserLanguage = navigator.language || navigator.languages[0];
-      if (browserLanguage.startsWith('ru')) {
-        setCurrentLanguage('ru');
-      }
+      // Default to Russian for fixnetstore.ru
+      setCurrentLanguage('ru');
+      localStorage.setItem('fixnet_language', 'ru');
     }
   }, []);
 
