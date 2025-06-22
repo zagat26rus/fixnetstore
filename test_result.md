@@ -143,15 +143,18 @@ frontend:
 
   - task: "Admin Authentication Flow"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/src/pages/AdminLogin.jsx"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "testing"
         comment: "Admin routes are not working correctly. Navigating to /admin or /admin/login redirects to the homepage instead of the login page."
+      - working: true
+        agent: "testing"
+        comment: "Admin routes are now working correctly. Direct navigation to /admin/login shows the login page. Admin login with credentials (zagat5654@gmail.com / admin123) works correctly and redirects to the dashboard. Unauthenticated access to /admin redirects to the login page as expected."
 
   - task: "Admin Dashboard Functionality"
     implemented: true
