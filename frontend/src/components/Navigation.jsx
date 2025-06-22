@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,11 +19,11 @@ const Navigation = () => {
   }, []);
 
   const navItems = [
-    { path: '/', label: 'Home' },
-    { path: '/how-it-works', label: 'How it Works' },
-    { path: '/why-fixnet', label: 'Why FixNet' },
-    { path: '/faq', label: 'FAQ' },
-    { path: '/contact', label: 'Contact' }
+    { path: '/', label: t('nav.home') },
+    { path: '/how-it-works', label: t('nav.howItWorks') },
+    { path: '/why-fixnet', label: t('nav.whyFixNet') },
+    { path: '/faq', label: t('nav.faq') },
+    { path: '/contact', label: t('nav.contact') }
   ];
 
   return (
@@ -35,7 +38,7 @@ const Navigation = () => {
               <span className="text-white font-bold text-xl">F</span>
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              FixNet
+              {t('nav.brand')}
             </span>
           </Link>
 
@@ -57,11 +60,12 @@ const Navigation = () => {
             ))}
           </div>
 
-          {/* CTA Button */}
+          {/* Language Switcher & CTA Button */}
           <div className="hidden md:flex items-center space-x-4">
+            <LanguageSwitcher />
             <Link to="/submit-request">
               <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-full font-medium transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
-                Get Repair Quote
+                {t('nav.getRepairQuote')}
               </Button>
             </Link>
           </div>
@@ -102,11 +106,14 @@ const Navigation = () => {
                 {item.label}
               </Link>
             ))}
-            <Link to="/submit-request" onClick={() => setIsMobileMenuOpen(false)}>
-              <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 rounded-full font-medium transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl mt-4">
-                Get Repair Quote
-              </Button>
-            </Link>
+            <div className="pt-4">
+              <LanguageSwitcher className="mb-4" />
+              <Link to="/submit-request" onClick={() => setIsMobileMenuOpen(false)}>
+                <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 rounded-full font-medium transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                  {t('nav.getRepairQuote')}
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
