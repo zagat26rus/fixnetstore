@@ -182,6 +182,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "ChatBot opens correctly when clicking the chat button. Messages can be typed in the input field, but there seems to be an issue with the send button functionality. Messages appear in the chat window but no responses are received."
+      - working: true
+        agent: "testing"
+        comment: "ChatBot opens correctly when clicking the chat button. The chat window displays properly with the initial greeting message. Users can type messages in the input field and the chatbot responds appropriately to keywords like 'screen broken'."
 
   - task: "Page Navigation and Content"
     implemented: true
