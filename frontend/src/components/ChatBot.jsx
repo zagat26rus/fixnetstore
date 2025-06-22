@@ -39,6 +39,7 @@ const ChatBot = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = inputValue;
     setInputValue('');
     setIsTyping(true);
 
@@ -47,7 +48,7 @@ const ChatBot = () => {
       const botResponse = {
         id: Date.now() + 1,
         type: 'bot',
-        message: getBotResponse(inputValue),
+        message: getBotResponse(currentInput),
         timestamp: new Date().toISOString()
       };
 
