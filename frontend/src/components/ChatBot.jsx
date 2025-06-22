@@ -1,13 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from './ui/button';
-import { mockChatMessages, chatResponses } from '../mock/data';
+import { useLanguage } from '../context/LanguageContext';
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState(mockChatMessages);
+  const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
+  const { t, currentLanguage } = useLanguage();
+
+  // Initialize with greeting message in current language
+  useEffect(() => {
+    setMessages([{
+      id: 1,
+      type: "bot",
+      message: t('chatBot.greeting'),
+      timestamp: new Date().toISOString()
+    }]);
+  }, [currentLanguage, t]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -18,14 +29,31 @@ const ChatBot = () => {
   const getBotResponse = (userMessage) => {
     const message = userMessage.toLowerCase();
     
-    // Simple keyword matching for demo
-    for (const [keyword, response] of Object.entries(chatResponses)) {
-      if (keyword !== 'default' && message.includes(keyword)) {
-        return response;
+    // Simple keyword matching for Russian and English
+    const keywords = {
+      'привет': 'chatBot.responses.hello',
+      'hello': 'chatBot.responses.hello',
+      'hi': 'chatBot.responses.hi',
+      'экран': 'chatBot.responses.screen',
+      'screen': 'chatBot.responses.screen',
+      'батарея': 'chatBot.responses.battery',
+      'battery': 'chatBot.responses.battery',
+      'вода': 'chatBot.responses.water',
+      'water': 'chatBot.responses.water',
+      'стоимость': 'chatBot.responses.cost',
+      'цена': 'chatBot.responses.cost',
+      'cost': 'chatBot.responses.cost',
+      'время': 'chatBot.responses.time',
+      'time': 'chatBot.responses.time'
+    };
+    
+    for (const [keyword, responseKey] of Object.entries(keywords)) {
+      if (message.includes(keyword)) {
+        return t(responseKey);
       }
     }
     
-    return chatResponses.default;
+    return t('chatBot.responses.default');
   };
 
   const handleSendMessage = async () => {
@@ -93,8 +121,8 @@ const ChatBot = () => {
               </svg>
             </div>
             <div>
-              <h3 className="font-semibold">FixBot</h3>
-              <p className="text-xs opacity-90">AI Repair Assistant</p>
+              <h3 className="font-semibold">{t('chatBot.title')}</h3>
+              <p className="text-xs opacity-90">{t('chatBot.subtitle')}</p>
             </div>
           </div>
           <Button
@@ -149,7 +177,7 @@ const ChatBot = () => {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Ask about repairs..."
+              placeholder={t('chatBot.placeholder')}
               className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <Button
