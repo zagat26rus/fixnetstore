@@ -2,8 +2,11 @@ import React from 'react';
 import Hero from '../components/Hero';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
+import { useLanguage } from '../context/LanguageContext';
 
 const Home = () => {
+  const { t } = useLanguage();
+
   const features = [
     {
       icon: (
@@ -11,8 +14,8 @@ const Home = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
       ),
-      title: "AI-Powered Diagnostics",
-      description: "Advanced AI analyzes your device issues for accurate diagnosis and repair recommendations."
+      title: t('home.features.aiDiagnostics.title'),
+      description: t('home.features.aiDiagnostics.description')
     },
     {
       icon: (
@@ -20,8 +23,8 @@ const Home = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
         </svg>
       ),
-      title: "Lightning Fast Service",
-      description: "Most repairs completed within 24 hours with our streamlined process and expert technicians."
+      title: t('home.features.fastService.title'),
+      description: t('home.features.fastService.description')
     },
     {
       icon: (
@@ -29,8 +32,8 @@ const Home = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
         </svg>
       ),
-      title: "Trusted Quality",
-      description: "90-day warranty on all repairs with certified technicians and genuine parts guarantee."
+      title: t('home.features.trustedQuality.title'),
+      description: t('home.features.trustedQuality.description')
     }
   ];
 
@@ -43,11 +46,11 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Why Choose
+              {t('home.whyChoose')}
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> FixNet</span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Experience the next generation of device repair with cutting-edge technology and premium service.
+              {t('home.whyChooseSubtitle')}
             </p>
           </div>
 
@@ -77,21 +80,21 @@ const Home = () => {
         
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl md:text-6xl font-bold mb-8">
-            Ready to Fix Your Device?
+            {t('home.ctaTitle')}
           </h2>
           <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-2xl mx-auto">
-            Join thousands of satisfied customers who trust FixNet for premium device repair services.
+            {t('home.ctaDescription')}
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Link to="/submit-request">
               <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-4 text-lg rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-blue-500/25">
-                Start Your Repair Now
+                {t('home.startRepairNow')}
               </Button>
             </Link>
             <Link to="/how-it-works">
               <Button variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-10 py-4 text-lg rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
-                Learn More
+                {t('home.learnMore')}
               </Button>
             </Link>
           </div>
